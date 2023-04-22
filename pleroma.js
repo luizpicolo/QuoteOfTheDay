@@ -6,24 +6,21 @@ class PleromaAPI {
     this.authToken = authToken;
   }
 
-  postStatus(status) {
-    const postData = {
-      status: status,
-    };
+  async postStatus(status) {
+    const postData = { status };
 
-    return axios.post(this.endpoint, postData, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${this.authToken}`,
-      }
-    })
-      .then((response) => {
-        console.log('Post sent')
-      })
-      .catch((error) => {
-        throw new Error(error);
+    try {
+      const response = await axios.post(this.endpoint, postData, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.authToken}`,
+        },
       });
+      console.log('Post sent');
+    } catch (error) {
+      return error.message;
+    }
   }
 }
 
-module.exports = PleromaAPI
+module.exports = PleromaAPI;

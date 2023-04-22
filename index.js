@@ -4,20 +4,22 @@ require('dotenv').config();
 
 const pleromaEndpoint = process.env.PLEROMA_ENDPOINT;
 const authToken = process.env.AUTH_TOKEN;
-const url = `https://www.pensador.com/${process.env.CATEGORY_PHRASES}`;
+const quoteUrl = `https://www.pensador.com/${process.env.CATEGORY_PHRASES}`;
 
-const pleromaAPI    = new PleromaAPI(pleromaEndpoint, authToken);
-const quoteScraper  = new QuoteScraper(url);
+const pleromaAPI = new PleromaAPI(pleromaEndpoint, authToken);
+const quoteScraper = new QuoteScraper(quoteUrl);
 
-quoteScraper.fetchQuote().then(quoteData => {
-  if (quoteData){
-    pleromaAPI.postStatus(`${quoteData.quoteText}\n\n${quoteData.author}`).then((data) => {
-        console.log(data);
-    }).catch((error) => {
-        console.error(error);
-    });
+async function postQuoteToPleroma() {
+  try {
+    const quoteData = await quoteScraper.fetchQuote();
+    if (quoteData) {
+      const statusText = `${quoteData.quoteText}\n\n${quoteData.author}`;
+      const postResponse = await pleromaAPI.postStatus(statusText);
+      console.log(postResponse);
+    }
+  } catch (error) {
+    console.error(error);
   }
-})
+}
 
-
-
+postQuoteToPleroma();
