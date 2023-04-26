@@ -29,8 +29,23 @@ class QuoteScraper {
     }
   }
 
+  async checkQuoteFile() {
+    try {
+      await fs.access('quote.json');
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        console.log('quote.json file does not exist. Creating...');
+        await fs.writeFile('quote.json', '[]');
+      } else {
+        console.error(`Failed to read file: ${err}`);
+      }
+    }
+  }
+  
   async checkExistingQuotes(newQuote) {
     try {
+      await this.checkQuoteFile();
+  
       const data = await fs.readFile('quote.json');
       const existingQuotes = JSON.parse(data);
       const existingQuote = existingQuotes.find(q => q.quoteText === newQuote.quoteText && q.author === newQuote.author);
@@ -44,7 +59,7 @@ class QuoteScraper {
     } catch (error) {
       console.error(`Failed to read/write file: ${error}`);
     }
-  }
+  }  
 }
 
 module.exports = QuoteScraper;
