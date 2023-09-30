@@ -9,6 +9,7 @@ class QuoteScraper {
 
   async fetchQuote() {
     try {
+      console.log(this.url)
       const response = await axios.get(this.url);
       const $ = cheerio.load(response.data);
       const position = Math.floor(Math.random() * $('.frase').length) + 1;

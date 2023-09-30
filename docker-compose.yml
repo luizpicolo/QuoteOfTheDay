@@ -1,10 +1,10 @@
-version: "3.7"
-
+version: "3"
 services:
   app:
-    image: node:latest
-    command: ["node", "index.js"]
-    volumes:
-      - ./:/app
-    cron:
-      - "0 8 * * *"
+    env_file:
+    - .env
+    build:
+      context: .
+    restart: unless-stopped
+    container_name: quote_of_the_day
+    command: ./cronjob.sh
